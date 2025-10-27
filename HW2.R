@@ -6,7 +6,7 @@ source("/Users/larali/ECON460/data files/read_onlinespending.R")
 library(gamlr)
 
 # 1a, 1b, 1c 
-lasso_model <- gamlr(xweb, log(yspend), verb = TRUE)
+#lasso_model <- gamlr(xweb, log(yspend), verb = TRUE)
 cv_lasso <- cv.gamlr(xweb, log(yspend))
 cv_lasso$lambda.min
 coef_lasso <- coef(cv_lasso, select = "min")
