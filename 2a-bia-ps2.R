@@ -2,7 +2,7 @@
 # -------------------------
 library(Matrix)
 set.seed(0)
-
+library(gamlr)
 # Load yspend
 spend_raw <- read.csv("DSCI/Fall2025/ECON460/data/browser-totalspend.csv")
 yspend <- spend_raw$spend
@@ -18,18 +18,19 @@ visit_col <- grep("(visit.*percent|percent|share|visits?)$", names(web_raw), val
 
 # Keep the right columns
 web <- web_raw[, c(id_col, site_col, visit_col)]
-names(web) <- c("id", "site", "visitpercent")
-
-# -------------------------
-#2a) 
-#Convert to factors and sparse matrix
+names(web) <- c("id", "site", "visits")
 web$id   <- factor(web$id)
 web$site <- factor(web$site)
 
+machinetotals <- as.vector(tapply(web$visits, web$id, sum))
+visitpercent <- 100 * web$visits / machinetotals[web$id]
+
+# -------------------------
+#2a) 
 xweb <- sparseMatrix(
   i = as.numeric(web$id),
   j = as.numeric(web$site),
-  x = web$visitpercent,
+  x = visitpercent,
   dims = c(nlevels(web$id), nlevels(web$site)),
   dimnames = list(id = levels(web$id), site = levels(web$site))
 )
@@ -56,10 +57,10 @@ cv.lasso_model <- cv.gamlr(
   x = x_est,
   y = log(y_est),
   nfold = 5,
-  verb = TRUE   # prints per-fold progress like in the slides
+  verb = TRUE   
 )
 
-# Plot: OOS CV error vs lambda 
+# plot: OOS CV error vs lambda 
 png("cv_lasso_oos_error.png", width = 1100, height = 800, res = 140)
 plot(cv.lasso_model)  # produces the U-shaped curve with two dotted lines
 dev.off()
