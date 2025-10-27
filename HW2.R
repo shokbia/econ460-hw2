@@ -94,10 +94,13 @@ nonzero_idx_original
 library(Matrix)
 library(gamlr)
 
+library(Matrix)
+library(gamlr)
+
 # random seed
 set.seed(0)
 
-# daata preparation (from dong's read_onlinespending.R)
+# Data preparation (from read_onlinespending.R)
 browser_spend <- read.csv("C:\\Users\\rawre\\Downloads\\browser-totalspend.csv")
 yspend <- browser_spend$spend
 
@@ -132,14 +135,15 @@ xweb_holdout <- xweb[-sample_indices, ]
 log_yspend_holdout <- log_yspend[-sample_indices]
 
 # 5-fold cross-validated lasso on estimation sample
-cat("2a running 5-fold cross-validated lasso on estimation sample...\n")
+cat("2a. running 5-fold cross-validated lasso on estimation sample...\n")
 cv_lasso_est <- cv.gamlr(xweb_est, log_yspend_est, nfold = 5, verb = TRUE)
 
 # Plot out-of-sample cross validation error
-plot(cv_lasso_est, main = "Out-of-Sample CV Error vs Lambda")
+plot(cv_lasso_est, main = "Out-of-Sample CV Error vs Lambda by Group 8")
 
 # 2b in-sample prediction error
 lambda_min <- cv_lasso_est$lambda.min
+cat("2b. Optimal lambda (lambda.min):", lambda_min, "\n")
 lasso_min <- gamlr(xweb_est, log_yspend_est, lambdas = lambda_min)
 
 # predictions for estimation sample
