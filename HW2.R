@@ -70,3 +70,23 @@ manual_lasso <- glmnet(xweb, log(yspend), lambda = best_lambda, standardize = TR
 coef_manual_lasso <- coef(manual_lasso, s = best_lambda)
 nonzero_idx_manual <- which(coef_manual_lasso[-1] != 0)
 nonzero_idx_manual
+
+
+
+## QUESTION 1 CHLOE
+set.seed(0)
+setwd("~/Downloads/Fall2025")
+source("read_onlinespending.R")
+library(gamlr)
+set.seed(0)
+
+
+ylog <- log(yspend)
+cv.lasso <- cv.gamlr(xweb, ylog, verb=TRUE)
+lambda_chosen <- cv.lasso$lambda.min
+lambda_chosen
+
+
+coef_lasso <- coef(cv.lasso, s="min") 
+nonzero_idx_original <- which(coef_lasso[-1] != 0) 
+nonzero_idx_original
